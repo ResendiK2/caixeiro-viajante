@@ -16,6 +16,6 @@ routes.get('/clients/:id', getClientByIdController);
 routes.post('/clients', createClients);
 routes.put('/clients/:id', updateClients);
 routes.delete('/clients/:id', deleteClients);
-routes.get('/clients/search', filterClientsController);
+routes.get('/clients/search/:filter', filterClientsController);
 
 export { routes };
