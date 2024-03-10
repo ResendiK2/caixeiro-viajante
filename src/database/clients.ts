@@ -20,6 +20,16 @@ export const getClientById = async (id: string) => {
     return res.rows[0];
 }
 
+export const getClientByEmail = async (email: string) => {
+    const client = await connect();
+
+    const res = await client.query('SELECT * FROM clients WHERE email = $1', [email]);
+
+    client.release();
+
+    return res.rows[0];
+}
+
 export const createClient = async (name: string, email: string, phone: string, coordinate_x: string, coordinate_y: string) => {
     const client = await connect();
 
@@ -50,12 +60,13 @@ export const deleteClient = async (id: string) => {
     return res.rowCount;
 }
 
-export const filterClients = async ({ name, email, phone }: { name: string, email: string, phone: string }) => {
+export const filterClients = async (filter) => {
     const client = await connect();
 
-    console.log(name, email, phone);
-
-    const res = await client.query('SELECT * FROM clients WHERE name ILIKE $1 OR email ILIKE $2 OR phone ILIKE $3', [name || '', email || '', phone || '']);
+    // Aqui preferi usar a função de distância de Levenshtein para fazer a busca por similaridade. 
+    // Poderia ser feito de outras formas também, como por exemplo, usando o operador LIKE para 
+    // buscar por similaridade no banco de dados ou o operador SOUNDEX, para buscar por similaridade fonética.
+    const res = await client.query('SELECT * FROM clients WHERE LEVENSHTEIN(name, $1) < 3 OR LEVENSHTEIN(email, $1) < 3 OR LEVENSHTEIN(phone, $1) < 3', [filter]);
 
     client.release();
 
