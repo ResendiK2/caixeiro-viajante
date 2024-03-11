@@ -81,27 +81,24 @@ const updateClients = async (request: any, response: any) => {
 }
 
 function setMatrix(clients: IClient[]) {
-    let matrix = [];
-
-    const ids = clients.map(client => client.id);
-
-    for (let i = 0; i < clients.length; i++) {
-        const clientI = clients[i];
-
-        matrix.push({ [clientI.id]: ids.map((id, j) => ({ [id]: getDistance(clientI, clients[j]) })) });
-    }
-
-    return matrix;
+    // função que retorna a matriz de distâncias
+    return clients.map(clientI => {
+        return {
+            [clientI.id]: clients.map((clientJ) => {
+                return { [clientJ.id]: getDistance(clientI, clientJ) }
+            })
+        }
+    });
 }
 
 function getDistance(client1: IClient, client2: IClient) {
-    return Math.sqrt(
-        Math.pow(client1.coordinate_x - client2.coordinate_x, 2) +
-        Math.pow(client1.coordinate_y - client2.coordinate_y, 2)
-    );
+    // função que retorna a distância entre dois clientes
+    return Math.abs(client1.coordinate_x - client2.coordinate_x) + Math.abs(client1.coordinate_y - client2.coordinate_y);
 }
 
 function greedy(matrix: any): Set<string> {
+    // função que retorna a rota do caixeiro viajante pelo método guloso
+
     const route = [];
     const visits: Set<string> = new Set();
 
@@ -115,6 +112,7 @@ function greedy(matrix: any): Set<string> {
         const next = Object.values(current[Object.keys(current)[0]])
             .filter((value: any) => !visits.has(Object.keys(value)[0]))
             .sort((a: any, b: any) => +Object.values(a)[0] - +Object.values(b)[0])[0];
+        // pega o próximo cliente que ainda não foi visitado e que está mais próximo do cliente atual
 
         if (next) {
             current = matrix.find((client: any) => Object.keys(client)[0] === Object.keys(next)[0]);
@@ -127,9 +125,8 @@ function greedy(matrix: any): Set<string> {
 }
 
 function caixeiroViajante(clients: IClient[]): Set<string> {
+    // função que retorna a rota do caixeiro viajante
     const matrix = setMatrix(clients);
-
-    console.log("Matriz de distâncias:", matrix);
 
     return greedy(matrix);
 }
@@ -145,6 +142,8 @@ async function getRoute(_: any, response: any) {
         const visited = [];
 
         visits.forEach((id) => {
+            if (id === '0') return;
+
             visited.push(clients.find((client: IClient) => {
                 const clientId = client.id
 
