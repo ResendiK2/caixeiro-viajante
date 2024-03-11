@@ -33,16 +33,17 @@ const corsOptions = (err, req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Content-Type', 'application/json')
+
 
     next();
 }
 
-
 app.use(cors());
-app.use(routes);
-app.use(express.json());
-app.use(errorHandler);
 app.use(corsOptions);
+app.use(errorHandler);
+app.use(express.json());
+app.use(routes);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
