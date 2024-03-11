@@ -23,7 +23,7 @@ export const getClientByEmail = async (email: string) => {
 export const createClient = async (name: string, email: string, phone: string, coordinate_x: number, coordinate_y: number) => {
     const client = await connect();
 
-    const res = await client.query('INSERT INTO clients (name, email, phone, coordinate_x, coordinate_y) VALUES ($1, $2, $3, $4, $5) RETURNING *', [name, email, phone, coordinate_x, coordinate_y]);
+    const res = await client.query('INSERT INTO clients (name, email, phone, coordinate_x, coordinate_y) VALUES ($1, $2, $3, $4, $5) RETURNING *', [name, email, phone, +coordinate_x, +coordinate_y]);
 
     client.release();
 
