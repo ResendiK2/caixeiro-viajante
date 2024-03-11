@@ -3,6 +3,7 @@ import { Pool } from 'pg';
 export const connect = async () => {
     if (global.connection) {
         return global.connection.connect();
+        // código usado para evitar que a aplicação se conecte ao banco de dados mais de uma vez
     }
 
     const pool = new Pool({
@@ -18,6 +19,7 @@ export const connect = async () => {
     client.release();
 
     global.connection = pool;
+    // código usado para evitar que a aplicação se conecte ao banco de dados mais de uma vez
     return pool.connect();
 }
 
